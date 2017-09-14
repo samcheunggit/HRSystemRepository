@@ -1,85 +1,31 @@
-var express = require("express");
-var bodyParser = require("body-parser");
-var mongodb = require("mongodb");
-var ObjectID = mongodb.ObjectID;
+const express = require('express');
+const bodyParser = require('body-parser');
+const path = require('path');
+const http = require('http');
+const app = express();
 
-var CONTACTS_COLLECTION = "contacts";
+// API file for interacting with MongoDB
+const api = require('./server/routes/api');
 
-var app = express();
+// Parsers
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false}));
 
-// Create a database variable outside of the database connection callback to reuse the connection pool in your app.
-var db;
+// Angular DIST output folder
+app.use(express.static(path.join(__dirname, 'dist')));
 
-// Connect to the database before starting the application server.
-mongodb.MongoClient.connect(process.env.MONGODB_URI, function (err, database) {
-  if (err) {
-    console.log(err);
-    process.exit(1);
-  }
+// API location
+app.use('/api', api);
 
-  // Save database object from the callback for reuse.
-  db = database;
-  console.log("Database connection ready");
-
-  // Initialize the app.
-  var server = app.listen(process.env.PORT || 8080, function () {
-    var port = server.address().port;
-    console.log("App now running on port", port);
-  });
+// Send all other requests to the Angular app
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist/index.html'));
 });
 
+//Set Port
+const port = process.env.PORT || '3000';
+app.set('port', port);
 
-// CONTACTS API ROUTES BELOW
+const server = http.createServer(app);
 
-// Generic error handler used by all endpoints.
-function handleError(res, reason, message, code) {
-  console.log("ERROR: " + reason);
-  res.status(code || 500).json({"error": message});
-}
-
-/*  "/api/contacts"
- *    GET: finds all contacts
- *    POST: creates a new contact
- */
-
-app.get("/api/contacts", function(req, res) {
-  db.collection(CONTACTS_COLLECTION).find({}).toArray(function(err, docs) {
-    if (err) {
-      handleError(res, err.message, "Failed to get contacts.");
-    } else {
-      res.status(200).json(docs);
-    }
-  });
-});
-
-app.post("/api/contacts", function(req, res) {
-  var newContact = req.body;
-
-  if (!req.body.name) {
-    handleError(res, "Invalid user input", "Must provide a name.", 400);
-  }
-
-  db.collection(CONTACTS_COLLECTION).insertOne(newContact, function(err, doc) {
-    if (err) {
-      handleError(res, err.message, "Failed to create new contact.");
-    } else {
-      res.status(201).json(doc.ops[0]);
-    }
-  });
-});
-
-/*  "/api/contacts/:id"
- *    GET: find contact by id
- *    PUT: update contact by id
- *    DELETE: deletes contact by id
- */
-
-app.get("/api/contacts/:id", function(req, res) {
-});
-
-app.put("/api/contacts/:id", function(req, res) {
-});
-
-app.delete("/api/contacts/:id", function(req, res) {
-});
+server.listen(port, () => console.log(`Running on localhost:${port}`));
