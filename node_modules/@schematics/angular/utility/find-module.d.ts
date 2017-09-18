@@ -13,6 +13,7 @@ export interface ModuleOptions {
     sourceDir?: string;
     path?: string;
     skipImport?: boolean;
+    appRoot?: string;
 }
 /**
  * Find the module refered by a set of options passed to the schematics.
