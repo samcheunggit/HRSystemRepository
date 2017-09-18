@@ -13,11 +13,13 @@ app.use(express.static(path.join(_dirname, 'dist')));
 //   res.sendFile(path.join(_dirname, 'dist/index.html'));
 // });
 
-const port = process.env.PORT || '8080';
-app.set('port', port);
+app.listen(process.env.PORT || 8080);
 
-const server = http.createServer(app);
-server.listen(port, ()=>console.log('Running'));
+// const port = process.env.PORT || '8080';
+// app.set('port', port);
+
+// const server = http.createServer(app);
+// server.listen(port, ()=>console.log('Running'));
 
 // const express = require('express');
 // const app = express();
