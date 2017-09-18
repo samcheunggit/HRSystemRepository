@@ -7,25 +7,23 @@ const path = require('path');
 
 const app = express();
 
-// app.use(express.static(path.join(_dirname, 'dist')));
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // app.get('*', (req,res) => {
 //   res.sendFile(path.join(_dirname, 'dist/index.html'));
 // });
 
-app.listen(process.env.PORT || 8080);
+const port = process.env.PORT || '8080';
+app.set('port', port);
 
-// const port = process.env.PORT || '8080';
-// app.set('port', port);
-
-// const server = http.createServer(app);
-// server.listen(port, ()=>console.log('Running'));
+const server = http.createServer(app);
+server.listen(port, ()=>console.log('Running'));
 
 // const express = require('express');
 // const app = express();
 // // Run the app by serving the static files
 // // in the dist directory
-app.use(express.static(__dirname + '/dist'));
+// app.use(express.static(__dirname + '/dist'));
 // // Start the app by listening on the default
 // // Heroku port
 // app.listen(process.env.PORT || 8080);
