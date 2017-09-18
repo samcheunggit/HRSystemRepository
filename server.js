@@ -13,7 +13,7 @@ app.use(express.static(path.join(_dirname, 'dist')));
 //   res.sendFile(path.join(_dirname, 'dist/index.html'));
 // });
 
-const port = process.env.PORT || '3001';
+const port = process.env.PORT || '8080';
 app.set('port', port);
 
 const server = http.createServer(app);
