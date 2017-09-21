@@ -6,5 +6,16 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  name = 'Lok Fu Rhenish Nursery';
+  
+  constructor() {
+  }
+    
+  
+
+  ngOnInit() {
+
+  }
+  
+  logoPath = './assets/logo.png'
+  mainTitle = 'Lok Fu Rhenish Nursery'
 }
