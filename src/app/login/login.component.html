@@ -3,18 +3,18 @@
     <img class="img-responsive w-100" [src]="logoPath" alt="Lok Fu Rhenish Nursery">
   </div> 
   <div class="form">
-    <form class="register-form">
-      <input type="text" placeholder="name"/>
-      <input type="password" placeholder="password"/>
-      <input type="text" placeholder="email address"/>
-      <button>create</button>
-      <p class="message">Already registered? <a href="#">Sign In</a></p>
+    <form class="forgotpw-form" *ngIf="showForgotPWForm">
+      <input type="text" placeholder="email address" required/>
+      <button>get your password! </button>
+      <br><br>
+        <a class="login-form-anchor" href="#" (click)="switchForm()">back to Sign In</a>
     </form>
-    <form class="login-form">
-      <input type="text" placeholder="username"/>
-      <input type="password" placeholder="password"/>
+    <form class="login-form" *ngIf="showLoginForm">
+      <input type="text" placeholder="username" required/>
+      <input type="password" placeholder="password" required/>
       <button>login</button>
-      <p class="message">Not registered? <a href="#">Create an account</a></p>
+      <br><br>
+        <a class="login-form-anchor" href="#" (click)="switchForm()">Forgot your password? </a>
     </form>
   </div>
 </div>

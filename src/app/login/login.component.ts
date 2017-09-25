@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
@@ -13,5 +14,15 @@ export class LoginComponent implements OnInit {
   }
   
   logoPath = './assets/logo.png'
+  
+  showForgotPWForm = false
+  showLoginForm = true
+
+  public switchForm() {
+//     element.animate({height: "toggle", opacity: "toggle"}, "slow");
+    this.showForgotPWForm = !this.showForgotPWForm;
+    this.showLoginForm = !this.showLoginForm;
+    return false;
+  }
 
 }

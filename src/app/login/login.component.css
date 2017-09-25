@@ -41,16 +41,20 @@
 }
 .form .message {
   margin: 15px 0 0;
-  color: #b3b3b3;
+  color: #4CAF50;
   font-size: 12px;
 }
 .form .message a {
   color: #4CAF50;
   text-decoration: none;
 }
-.form .register-form {
-  display: none;
+
+.login-form-anchor{
+  margin: 15px 0 0;
+  color: #4CAF50;
+  font-size: 12px;
 }
+
 .container {
   position: relative;
   z-index: 1;
