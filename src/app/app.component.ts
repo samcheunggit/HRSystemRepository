@@ -10,12 +10,7 @@ export class AppComponent {
   constructor() {
   }
     
-  
-
   ngOnInit() {
 
   }
-  
-  logoPath = './assets/logo.png'
-  mainTitle = 'Lok Fu Rhenish Nursery'
 }

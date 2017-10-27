@@ -1,0 +1,23 @@
+<div class="login-page">
+  <div class="login-logo">
+    <img class="img-responsive w-100" [src]="logoPath" alt="Lok Fu Rhenish Nursery">
+  </div> 
+  <div class="form">
+    <!--     main login form -->
+    <form class="login-form" *ngIf="showLoginForm" (submit)="userLogin()">
+      <input type="text" placeholder="User Name" [(ngModel)]="username" name="username" required/>
+      <input type="password" placeholder="Password" [(ngModel)]="password" name="password" required/>
+      <button type="submit">login</button>
+      <br><br>
+        <a class="login-form-anchor" href="#" (click)="switchForm()">Forgot your password? </a>
+    </form>
+    
+    <!--     forgot passward form -->
+    <form class="forgotpw-form" *ngIf="showForgotPWForm">
+      <input type="text" placeholder="Email address" required/>
+      <button>get your password! </button>
+      <br><br>
+        <a class="login-form-anchor" href="#" (click)="switchForm()">back to Sign In</a>
+    </form>
+  </div>
+</div>
