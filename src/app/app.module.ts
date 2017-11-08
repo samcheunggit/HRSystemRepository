@@ -7,6 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { DataTableModule } from 'angular-4-data-table-bootstrap-4';
+import { DatePickerModule } from "angular-io-datepicker/src/datepicker/index";
 
 import * as $ from 'jquery';
 
@@ -21,8 +22,9 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { EmployeeComponent } from './components/employee/employee.component';
 
 /*  Services  */
-import { AuthenticationService } from './services/authentication/authentication.service'
-import { EmployeeService } from './services/employee/employee.service'
+import { AuthenticationService } from './services/authentication/authentication.service';
+import { EmployeeService } from './services/employee/employee.service';
+import { LoginService } from './services/login/login.service';
 
 /* Guards */
 import { AuthGuard } from './guards/authGuard';
@@ -49,12 +51,14 @@ const appRoutes: Routes = [
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    DataTableModule
+    DataTableModule,
+    DatePickerModule
   ],
   providers: [
     AuthenticationService, 
     AuthGuard, 
     EmployeeService,
+    LoginService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,

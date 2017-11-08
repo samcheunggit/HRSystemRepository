@@ -8,12 +8,15 @@ import { AuthenticationService } from '../../services/authentication/authenticat
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
+  
+  username:string = ""
 
   constructor(
   private router: Router, 
   private authenticationService: AuthenticationService) { }
 
   ngOnInit() {
+    this.username = this.authenticationService.getUsernameFromLoginUser()
   }
   
   logout(){

@@ -35,6 +35,10 @@ export class AuthenticationService {
   private getLoginUser(){
     return JSON.parse(localStorage.getItem('loginUser'));
   }
+  
+  getUsernameFromLoginUser(){
+    return this.getLoginUser().username;
+  }
 
   getEmployeeIdFromLoginUser() {
     return this.getLoginUser().employeeid;

@@ -25,15 +25,15 @@
             [resizable]="true">
         </data-table-column>
         <data-table-column
-            [property]="'worktype'"
-            [header]="'Employment Type'"
-            [sortable]="true"
-            [resizable]="true">
-        </data-table-column>
-        <data-table-column
             property="telno"
             header="Phone number"
             width="150px">
+        </data-table-column>
+        <data-table-column
+            [property]="'gender'"
+            [header]="'Gender'"
+            [sortable]="true"
+            [resizable]="true">
         </data-table-column>
          <data-table-column
           header="Actions">
@@ -44,13 +44,12 @@
         </data-table-column>
     </data-table>
 </div>
-  <p>Form value: {{ employeeForm.value | json }}</p>
-<p>Form status: {{ employeeForm.status | json }}</p>
-  <p>title value: {{ employeeForm.get('title').value}}</p>
-  
+
+<div *ngIf="showForm">
   <form (ngSubmit)="saveEmployee(employeeForm.value)" [formGroup]="employeeForm" disabled="true">
     <p class="h1">Employment Information</p>
     <hr/><br>
+    <input type="hidden" class="form-control" formControlName="id" name="id" value="{{employee?._id}}">
     <div class="row">
       <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 col-md-pull-8" style="border-style: solid;">
         <div class="text-center">
@@ -62,22 +61,39 @@
         <div class="form-group row">
           <label for="employeeTitle" class="col-sm-2 col-form-label">Title</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" formControlName="title" id="employeeTitle" value="{{employee?.title}}">
+            <input type="text" class="form-control" [ngClass]="{
+                  'is-invalid': employeeForm.controls.title.invalid && employeeForm.controls.title.dirty, 
+                  'is-valid': employeeForm.controls.title.valid && employeeForm.controls.title.dirty 
+                }" formControlName="title" id="employeeTitle" value="{{employee?.title}}">
+            <div class="invalid-feedback" 
+                 *ngIf="employeeForm.controls.title.invalid && employeeForm.controls.title.dirty"> 
+              Title is mandatory
+            </div>
           </div>
         </div>
         <div class="form-group row">
           <label for="employeeWorkType" class="col-sm-2 col-form-label">Employment Type</label>
           <div class="col-sm-10">
-            <select class="form-control" id="employeeWorkType" formControlName="worktype">
-              <option *ngFor="let worktype of worktypes" [value]="worktype.id" [selected]="employee?.worktype==worktype.id">{{worktype.value}}</option>
+            <select class="form-control" [ngClass]="{
+                  'is-invalid': employeeForm.controls.worktype.invalid && employeeForm.controls.worktype.dirty, 
+                  'is-valid': employeeForm.controls.worktype.valid && employeeForm.controls.worktype.dirty 
+                }" id="employeeWorkType" formControlName="worktype">
+              <option value="">- Select One -</option>
+              <option *ngFor="let worktype of worktypes" [value]="worktype.id" [selected]="worktype.id==employee?.worktype">{{worktype.value}}</option>
             </select>
+            <div class="invalid-feedback" 
+                 *ngIf="employeeForm.controls.worktype.invalid && employeeForm.controls.worktype.dirty"> 
+              Employment Type is mandatory
+            </div>
           </div>
         </div>
         <div class="form-group row">
           <label for="employeeDateOfJoin" class="col-sm-2 col-form-label">Date Of Join</label>
           <div class="col-sm-10">
-<!--               <datepicker class="form-control" formControlName="dateofjoin" [viewFormat]="'DD/MM/YYYY'" [modelFormat]="'YYYY-MM-DD'"  [id]="employeeDateOfJoin" [label]="123123" value="{{employee?.dateofjoin}}"></datepicker> -->
-<!--             <input type="date" class="form-control" id="employeeDateOfJoin" formControlName="dateofjoin" value="{{employee?.dateofjoin | date: 'yyyy-MM-dd'}}"> -->
+             <date-picker id="dateofjoin" formControlName="dateofjoin" [disabled]="dateVisibilityControl"></date-picker>
+            <div class="error-msg-for-datepicker" *ngIf="employeeForm.controls.dateofjoin.invalid && employeeForm.controls.dateofjoin.dirty"> 
+              Date Of Join is mandatory
+            </div>
           </div>
         </div>
         <div class="form-group row">
@@ -98,33 +114,65 @@
     <div class="form-group row">
       <label for="employeeFullName" class="col-sm-2 col-form-label">Full Name</label>
       <div class="col-sm-10">
-        <input type="text" class="form-control" id="employeeFullName" formControlName="fullname" placeholder="Full Name" value="{{employee?.fullname}}">
+        <input type="text" class="form-control" [ngClass]="{
+                  'is-invalid': employeeForm.controls.fullname.invalid && employeeForm.controls.fullname.dirty, 
+                  'is-valid': employeeForm.controls.fullname.valid && employeeForm.controls.fullname.dirty 
+                }" id="employeeFullName" formControlName="fullname" placeholder="Full Name" value="{{employee?.fullname}}">
+        <div class="invalid-feedback" 
+                 *ngIf="employeeForm.controls.fullname.invalid && employeeForm.controls.fullname.dirty"> 
+              Full Name is mandatory
+        </div>
       </div>
     </div>
     <div class="form-group row">
       <label for="employeeBirthday" class="col-sm-2 col-form-label">Birthday</label>
       <div class="col-sm-10">
-        <input type="date" class="form-control" id="employeeBirthday" formControlName="birthday" value="{{employee?.birthday | date: 'yyyy-MM-dd'}}">
+        <date-picker formControlName="birthday" [disabled]="dateVisibilityControl"></date-picker>
+        <div class="error-msg-for-datepicker" *ngIf="employeeForm.controls.birthday.invalid && employeeForm.controls.birthday.dirty"> 
+              Birthday is mandatory
+        </div>
       </div>
     </div>
     <div class="form-group row">
       <label for="employeeTelNo" class="col-sm-2 col-form-label">Contact Number</label>
       <div class="col-sm-10">
-        <input type="number" class="form-control" id="employeeTelNo" formControlName="telno" value="{{employee?.telno}}">
+        <input type="number" class="form-control" [ngClass]="{
+                  'is-invalid': employeeForm.controls.telno.invalid && employeeForm.controls.telno.dirty, 
+                  'is-valid': employeeForm.controls.telno.valid && employeeForm.controls.telno.dirty 
+                }" id="employeeTelNo" formControlName="telno" value="{{employee?.telno}}">
+        <div class="invalid-feedback" 
+                 *ngIf="employeeForm.controls.telno.invalid && employeeForm.controls.telno.dirty"> 
+              Contact Number is mandatory
+        </div>
       </div>
     </div>
     <div class="form-group row">
       <label for="employeeGender" class="col-sm-2 col-form-label">Gender</label>
       <div class="col-sm-10">
-        <select class="form-control" id="employeeGender" formControlName="gender">
+        <select class="form-control" [ngClass]="{
+                  'is-invalid': employeeForm.controls.gender.invalid && employeeForm.controls.gender.dirty, 
+                  'is-valid': employeeForm.controls.gender.valid && employeeForm.controls.gender.dirty 
+                }" id="employeeGender" formControlName="gender">
+          <option value="">- Select One -</option>
           <option *ngFor="let gender of genders" [value]="gender.id" [selected]="employee?.gender==gender.id">{{gender.value}}</option>
         </select>
+        <div class="invalid-feedback" 
+                 *ngIf="employeeForm.controls.gender.invalid && employeeForm.controls.gender.dirty"> 
+              Gender is mandatory
+        </div>
       </div>
     </div>
     <div class="form-group row">
       <label for="employeeAddress" class="col-sm-2 col-form-label">Address</label>
       <div class="col-sm-10">
-        <textarea  class="form-control" id="employeeAddress" value="{{employee?.address}}" rows="4" formControlName="address"></textarea>
+        <textarea  class="form-control" [ngClass]="{
+                  'is-invalid': employeeForm.controls.address.invalid && employeeForm.controls.address.dirty, 
+                  'is-valid': employeeForm.controls.address.valid && employeeForm.controls.address.dirty 
+                }" id="employeeAddress" value="{{employee?.address}}" rows="4" formControlName="address"></textarea>
+        <div class="invalid-feedback" 
+                 *ngIf="employeeForm.controls.address.invalid && employeeForm.controls.address.dirty"> 
+              Address is mandatory
+        </div>
       </div>
     </div>
     <p class="h5">Emergency Contact Information</p>
@@ -132,23 +180,44 @@
     <div class="form-group row">
       <label for="employeeECName" class="col-sm-2 col-form-label">Name</label>
       <div class="col-sm-10">
-        <input type="text" class="form-control" id="employeeECName" value="{{employee?.ecname}}" formControlName="ecname">
+        <input type="text" class="form-control" [ngClass]="{
+                  'is-invalid': employeeForm.controls.ecname.invalid && employeeForm.controls.ecname.dirty, 
+                  'is-valid': employeeForm.controls.ecname.valid && employeeForm.controls.ecname.dirty 
+                }" id="employeeECName" value="{{employee?.ecname}}" formControlName="ecname">
+        <div class="invalid-feedback" 
+                 *ngIf="employeeForm.controls.ecname.invalid && employeeForm.controls.ecname.dirty"> 
+              Emergency Contact Person Name is mandatory
+        </div>
       </div>
     </div>
     <div class="form-group row">
       <label for="employeeTelNo" class="col-sm-2 col-form-label">Contact Number</label>
       <div class="col-sm-10">
-        <input type="number" class="form-control" id="employeeTelNo" value="{{employee?.ectelno}}" formControlName="ectelno">
+        <input type="number" class="form-control" [ngClass]="{
+                  'is-invalid': employeeForm.controls.ectelno.invalid && employeeForm.controls.ectelno.dirty, 
+                  'is-valid': employeeForm.controls.ectelno.valid && employeeForm.controls.ectelno.dirty 
+                }" id="employeeTelNo" value="{{employee?.ectelno}}" formControlName="ectelno">
+        <div class="invalid-feedback" 
+                 *ngIf="employeeForm.controls.ectelno.invalid && employeeForm.controls.ectelno.dirty"> 
+              Emergency Contact Person Number is mandatory
+        </div>
       </div>
     </div>
     <div class="form-group row">
       <label for="employeeECRelation" class="col-sm-2 col-form-label">Relationship</label>
       <div class="col-sm-10">
-        <input type="text" class="form-control" id="employeeECRelation" value="{{employee?.ecrelation}}" formControlName="ecrelation">
+        <input type="text" class="form-control" [ngClass]="{
+                  'is-invalid': employeeForm.controls.ecrelation.invalid && employeeForm.controls.ecrelation.dirty, 
+                  'is-valid': employeeForm.controls.ecrelation.valid && employeeForm.controls.ecrelation.dirty 
+                }" id="employeeECRelation" value="{{employee?.ecrelation}}" formControlName="ecrelation">
+        <div class="invalid-feedback" 
+                 *ngIf="employeeForm.controls.ecrelation.invalid && employeeForm.controls.ecrelation.dirty"> 
+              Emergency Contact Person Relationship is mandatory
+        </div>
       </div>
     </div><br>
-    <button type="submit" class="btn btn-primary" ><i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
+    <button type="submit" class="btn btn-primary" [disabled]="!employeeForm.valid"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
   </form>
+  </div>
 </div>
-<!-- [disabled]="!employeeForm.valid" -->
 <br><br>

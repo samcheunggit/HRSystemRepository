@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const moment = require('moment');
-// const config = require('../config/database')
 
 // Employee Schema
 const EmployeeSchema = mongoose.Schema({
@@ -60,11 +59,24 @@ module.exports.getEmployeeById = (id, callback)=>{
 }
 
 // add employee and save it to mongodb
-module.exports.addEmployee = (newEmployee, callback)=>{  
-  newEmployee.save((error)=>{
-  if (error) throw "add employee error: "+error;
-  console.log("employee added successfully");
-  });
+module.exports.addEmployee = (newEmployee, callback)=>{
+  
+  // generate id for new login user
+  let objectId = new mongoose.mongo.ObjectId();
+  newEmployee.userid = objectId;
+  newEmployee.dateofjoin = moment(newEmployee.dateofjoin).format("MM/DD/YYYY");
+  newEmployee.save(callback);
+}
+
+// update employee and save it to mongodb
+module.exports.updateEmployee = (updatedEmployee, callback)=>{  
+// option set new to true, return the modified document rather than the original. defaults to false (changed in 4.0)
+  Employee.findByIdAndUpdate(updatedEmployee.id,  updatedEmployee, { new: true }, callback)
+}
+
+// delete employee and save it to mongodb
+module.exports.deleteEmployee = (employeeId, callback)=>{  
+  Employee.findByIdAndRemove(employeeId, callback)
 }
 
 // add employee and save it to mongodb

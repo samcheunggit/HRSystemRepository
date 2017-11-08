@@ -37,10 +37,19 @@ export class EmployeeService {
   }
   
   getAllEmployees(){
-
-//  converts the return type Observable<Response> that gets returned 
-//  from this.http.get() to an Observable<EmployeeResponse> which 
-//  it then returns to the caller.
     return this.http.get<AllEmployeeResponse>(this.employeeURLPrefix+'/getAllEmployees')
+  }
+
+  updateEmployee(employee){
+    return this.http.put<EmployeeResponse>(this.employeeURLPrefix+'/updateEmployee', employee);
+  }
+  
+  addEmployee(employee){
+    return this.http.post<EmployeeResponse>(this.employeeURLPrefix+'/addEmployee', employee);
+  }
+  
+  deleteEmployee(employeeId){
+    let params = new HttpParams().set('employeeId', employeeId);
+    return this.http.delete<EmployeeResponse>(this.employeeURLPrefix+'/deleteEmployee', {params: params});
   }
 }

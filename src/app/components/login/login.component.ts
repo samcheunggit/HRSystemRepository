@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication/authentication.service';
 
@@ -16,12 +16,12 @@ interface signedLoginUser {
 })
 export class LoginComponent implements OnInit {
   
-  logoPath: String = './assets/logo.png'
-  showForgotPWForm: Boolean
-  showLoginForm: Boolean
-  username: String
-  password: String
-  items: string[] = [];
+  logoPath: string = './assets/logo.png'
+  showForgotPWForm: boolean
+  showLoginForm: boolean
+  username: string
+  password: string
+  serverErrorMsg: string = ''
 
   constructor(
   private authenticationService:AuthenticationService,
@@ -39,12 +39,12 @@ export class LoginComponent implements OnInit {
   }
   
   userLogin(){
-    
+    this.serverErrorMsg ='';
     const loginUser = {
-      username: this.username,
-      password: this.password
+        username: this.username,
+        password: this.password
     }
-    
+  
     this.authenticationService.authenticateLogin(loginUser).subscribe(
         (data) => {
             console.log("POST call successful value returned in body", data);
@@ -55,12 +55,14 @@ export class LoginComponent implements OnInit {
             }
             else{
               console.log("login failed: "+data.message);
+              this.serverErrorMsg = data.message;
               this.username = "";
               this.password = "";
             }
         },
         error => {
             console.log("POST call in error", error);
+            this.serverErrorMsg = error
         },
         () => {
             console.log("The POST observable is now completed.");

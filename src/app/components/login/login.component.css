@@ -97,3 +97,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;      
 }
+
+.error-msg{
+  margin-top: .25rem;
+  font-size: .875rem;
+  color: #dc3545;
+}

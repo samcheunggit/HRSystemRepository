@@ -1,3 +1,9 @@
 .checkbox-align-bottom{
   padding-top: 5px;
 }
+
+.error-msg-for-datepicker{
+  margin-top: .25rem;
+  font-size: .875rem;
+  color: #dc3545;
+}

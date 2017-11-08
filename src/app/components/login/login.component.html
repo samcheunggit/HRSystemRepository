@@ -1,23 +1,43 @@
 <div class="login-page">
   <div class="login-logo">
     <img class="img-responsive w-100" [src]="logoPath" alt="Lok Fu Rhenish Nursery">
-  </div> 
+  </div>
+
   <div class="form">
     <!--     main login form -->
-    <form class="login-form" *ngIf="showLoginForm" (submit)="userLogin()">
-      <input type="text" placeholder="User Name" [(ngModel)]="username" name="username" required/>
-      <input type="password" placeholder="Password" [(ngModel)]="password" name="password" required/>
-      <button type="submit">login</button>
+    <form #loginForm="ngForm" class="login-form" *ngIf="showLoginForm" (submit)="userLogin()">
+      
+       <p class="font-weight-bold" style="word-break: break-all;" *ngIf="serverErrorMsg">
+         {{serverErrorMsg}}
+       </p>
+      
+      <div class="error-msg text-left font-weight-bold" *ngIf="usernameRef.invalid && (usernameRef.dirty || usernameRef.touched)">
+        <label>Please enter username.</label>
+      </div>
+
+      <div class="error-msg text-left font-weight-bold" *ngIf="passwordRef.invalid && (passwordRef.dirty || passwordRef.touched)">
+        <label>Please enter password.</label>
+      </div>
+
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="User Name" id="username" required [(ngModel)]="username" name="username" #usernameRef="ngModel">
+      </div>
+      <div class="form-group">
+        <input type="password" class="form-control" placeholder="Password" id="password" required [(ngModel)]="password" name="password" #passwordRef="ngModel">
+      </div>
+
+      <button type="submit" [disabled]="loginForm.form.invalid">login</button>
       <br><br>
-        <a class="login-form-anchor" href="#" (click)="switchForm()">Forgot your password? </a>
+      <a class="login-form-anchor" href="#" (click)="switchForm()">Forgot your password? </a>
     </form>
-    
+
+
     <!--     forgot passward form -->
     <form class="forgotpw-form" *ngIf="showForgotPWForm">
       <input type="text" placeholder="Email address" required/>
       <button>get your password! </button>
       <br><br>
-        <a class="login-form-anchor" href="#" (click)="switchForm()">back to Sign In</a>
+      <a class="login-form-anchor" href="#" (click)="switchForm()">back to Sign In</a>
     </form>
   </div>
 </div>

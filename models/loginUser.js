@@ -14,8 +14,7 @@ const loginUserSchema = mongoose.Schema({
     required: true
   },
   email: {
-    type: String,
-    required: true
+    type: String
   },
   createdate: {
     type: Date
@@ -65,4 +64,9 @@ module.exports.passwordValidation = (inputPassword, storedPassword, callback)=>{
     // if no error thrown, return callback as defined in route, (error, isMatch)
     callback(null, isMatch);
   })
+}
+
+// delete employee and save it to mongodb
+module.exports.deleteLoginUserByEmployeeId = (employeeId, callback)=>{
+  LoginUser.findOneAndRemove({ employeeid: employeeId }, callback)
 }
