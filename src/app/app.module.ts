@@ -7,7 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { DataTableModule } from 'angular-4-data-table-bootstrap-4';
-import { DatePickerModule } from "angular-io-datepicker/src/datepicker/index";
+import { MyDatePickerModule } from 'mydatepicker';
 
 import * as $ from 'jquery';
 
@@ -52,7 +52,7 @@ const appRoutes: Routes = [
     ReactiveFormsModule,
     HttpClientModule,
     DataTableModule,
-    DatePickerModule
+    MyDatePickerModule
   ],
   providers: [
     AuthenticationService, 

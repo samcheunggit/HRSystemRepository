@@ -8,6 +8,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SweetAlertService } from 'ngx-sweetalert2';
 import * as moment from 'moment';
 import { forkJoin } from "rxjs/observable/forkJoin";
+import {IMyDpOptions} from 'mydatepicker';
 
 @Component({
   selector: 'app-employee',
@@ -17,10 +18,17 @@ import { forkJoin } from "rxjs/observable/forkJoin";
 })
 export class EmployeeComponent implements OnInit {
   
+  public myDatePickerOptions: IMyDpOptions = {
+        // other options...
+        dateFormat: 'dd-mmm-yyyy',
+        showTodayBtn: true,
+        monthSelector: true,
+        yearSelector: true
+    };
+  
   employeeForm: FormGroup;
   showForm : boolean = false;
   showTable : boolean = false;
-  dateVisibilityControl : boolean = true;
   employee : any;
   allEmployees : any;
   genders = [{ id: 'M', value: 'Male'}, { id: 'F', value: 'Female'}];
@@ -72,8 +80,7 @@ export class EmployeeComponent implements OnInit {
       this.employeeService.getEmployeeById().subscribe(
         profile =>{
           this.employee = profile.employee;
-          
-          console.log("employee worktype: "+this.employee.worktype);
+          this.updateEmployeeFormModel(this.employee);
         },
         error =>{
           console.log("get employee failed: "+error.message);
@@ -100,8 +107,6 @@ export class EmployeeComponent implements OnInit {
     this.showForm = true;
     
     this.employeeForm.enable();
-    
-    this.dateVisibilityControl = false;
     
     this.updateEmployeeFormModel(this.employee);
   }
@@ -132,41 +137,41 @@ export class EmployeeComponent implements OnInit {
   
   clearForm(){
     this.employeeForm.reset();
-    // get all date picker element and empty their value, 
-    // because they cannot be cleaned through resetting the form
-    // let datepickerList = document.querySelectorAll('.datepicker-actions__input');
-    // for (let i = 0, element; (element = datepickerList[i]); i++) {
-    //     element.value = "";
-    // }
-  }
-  
-  formateDate(date: string){
-    return moment(date).format("YYYY-MM-DD");
+    // reset form cannot mark date picker as pristine
+    this.employeeForm.controls.dateofjoin.markAsPristine();
+    this.employeeForm.controls.birthday.markAsPristine();
   }
   
   addNewEmployeeForm(){
     this.clearForm();
     this.showForm = true;
     this.employeeForm.enable();
-    this.dateVisibilityControl = false;
     return false;
   }
   
-  hideAndCleanForm(){
-    this.clearForm();
-    this.showForm = false;
-  }
-  
   updateEmployeeFormModel(employee){
+    
+    let dateofjoin_employee = new Date(employee.dateofjoin);
+    let birthday_employee = new Date(employee.birthday);
 
     this.employeeForm.patchValue({
       id: employee._id,
       title: employee.title,
       worktype: employee.worktype,
-      dateofjoin: this.formateDate(employee.dateofjoin),
+      dateofjoin: {
+        date:{
+          year: dateofjoin_employee.getFullYear(),
+          month: dateofjoin_employee.getMonth() + 1,
+          day: dateofjoin_employee.getDate()}
+      },
       isactive: employee.isactive,
       fullname: employee.fullname,
-      birthday: this.formateDate(employee.birthday),
+      birthday: {
+        date:{
+          year: birthday_employee.getFullYear(),
+          month: birthday_employee.getMonth() + 1,
+          day: birthday_employee.getDate()}
+      },
       telno: employee.telno,
       gender: employee.gender,
       address: employee.address,
@@ -221,7 +226,16 @@ export class EmployeeComponent implements OnInit {
     return false;
   }
   
+  dateObjToJSDate(dateObj){
+    return moment(new Date(dateObj.date.year, dateObj.date.month, dateObj.date.day)).format('MM/DD/YYYY');
+  }
+  
   saveEmployee(employee){
+    
+    // retrieve and set date from date object first
+    employee.dateofjoin = this.dateObjToJSDate(employee.dateofjoin);
+    employee.birthday =  this.dateObjToJSDate(employee.birthday);
+    
     // update employee
     if (this.employeeForm.valid && this.employeeForm.controls.id.value) {
         this.employeeService.updateEmployee(employee).subscribe(

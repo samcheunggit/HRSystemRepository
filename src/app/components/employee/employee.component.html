@@ -90,7 +90,7 @@
         <div class="form-group row">
           <label for="employeeDateOfJoin" class="col-sm-2 col-form-label">Date Of Join</label>
           <div class="col-sm-10">
-             <date-picker id="dateofjoin" formControlName="dateofjoin" [disabled]="dateVisibilityControl"></date-picker>
+             <my-date-picker name="dateofjoin" [options]="myDatePickerOptions" formControlName="dateofjoin"></my-date-picker>
             <div class="error-msg-for-datepicker" *ngIf="employeeForm.controls.dateofjoin.invalid && employeeForm.controls.dateofjoin.dirty"> 
               Date Of Join is mandatory
             </div>
@@ -127,7 +127,7 @@
     <div class="form-group row">
       <label for="employeeBirthday" class="col-sm-2 col-form-label">Birthday</label>
       <div class="col-sm-10">
-        <date-picker formControlName="birthday" [disabled]="dateVisibilityControl"></date-picker>
+        <my-date-picker name="birthday" [options]="myDatePickerOptions" formControlName="birthday"></my-date-picker>
         <div class="error-msg-for-datepicker" *ngIf="employeeForm.controls.birthday.invalid && employeeForm.controls.birthday.dirty"> 
               Birthday is mandatory
         </div>

@@ -64,12 +64,11 @@ module.exports.addEmployee = (newEmployee, callback)=>{
   // generate id for new login user
   let objectId = new mongoose.mongo.ObjectId();
   newEmployee.userid = objectId;
-  newEmployee.dateofjoin = moment(newEmployee.dateofjoin).format("MM/DD/YYYY");
   newEmployee.save(callback);
 }
 
 // update employee and save it to mongodb
-module.exports.updateEmployee = (updatedEmployee, callback)=>{  
+module.exports.updateEmployee = (updatedEmployee, callback)=>{
 // option set new to true, return the modified document rather than the original. defaults to false (changed in 4.0)
   Employee.findByIdAndUpdate(updatedEmployee.id,  updatedEmployee, { new: true }, callback)
 }
@@ -85,4 +84,3 @@ module.exports.getAllEmployees = (callback)=>{
   // cannot accept number without quote ("__v":0)
   Employee.find({}, callback).select('-__v');
 }
-
