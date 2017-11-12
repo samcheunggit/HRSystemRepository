@@ -69,6 +69,9 @@ module.exports.addEmployee = (newEmployee, callback)=>{
 
 // update employee and save it to mongodb
 module.exports.updateEmployee = (updatedEmployee, callback)=>{
+  
+  console.log("update employe profile pic: "+JSON.stringify(updatedEmployee));
+  
 // option set new to true, return the modified document rather than the original. defaults to false (changed in 4.0)
   Employee.findByIdAndUpdate(updatedEmployee.id,  updatedEmployee, { new: true }, callback)
 }

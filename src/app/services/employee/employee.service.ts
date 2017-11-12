@@ -41,6 +41,7 @@ export class EmployeeService {
   }
 
   updateEmployee(employee){
+    console.log("employee profile picture: "+JSON.stringify(employee));
     return this.http.put<EmployeeResponse>(this.employeeURLPrefix+'/updateEmployee', employee);
   }
   

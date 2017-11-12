@@ -52,7 +52,7 @@ app.use(express.static(path.join(__dirname, 'dist')));
 app.use(cors());
 
 // Parse incoming request body so when you sumbit the form you can grab the data
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit:'50mb'}));
 
 // Passort is for login authentication
 app.use(passport.initialize());
@@ -68,9 +68,11 @@ app.get('*', (req,res) => {
 });
 
 // set port for node server
+const ipAddress = process.env.IP || '0.0.0.0';
 const port = process.env.PORT || '3000';
 app.set('port', port);
+app.set('host', ipAddress);
 
 // create server and listen to the port we set
 const server = http.createServer(app);
-server.listen(port, ()=>console.log('Server is running at port: '+port));
+server.listen(port, ipAddress, ()=>console.log('Server is running at port: '+port));

@@ -8,6 +8,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { DataTableModule } from 'angular-4-data-table-bootstrap-4';
 import { MyDatePickerModule } from 'mydatepicker';
+import { DropzoneModule } from 'ngx-dropzone-wrapper';
+import { DROPZONE_CONFIG } from 'ngx-dropzone-wrapper';
+import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
 
 import * as $ from 'jquery';
 
@@ -29,6 +32,12 @@ import { LoginService } from './services/login/login.service';
 /* Guards */
 import { AuthGuard } from './guards/authGuard';
 
+const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
+ // Change this to your upload POST address:
+  // url: 'https://httpbin.org/post',
+  maxFilesize: 50,
+  acceptedFiles: 'image/*'
+};
 
 const appRoutes: Routes = [
   {path:'', component:LoginComponent},
@@ -52,7 +61,8 @@ const appRoutes: Routes = [
     ReactiveFormsModule,
     HttpClientModule,
     DataTableModule,
-    MyDatePickerModule
+    MyDatePickerModule,
+    DropzoneModule
   ],
   providers: [
     AuthenticationService, 
@@ -63,6 +73,10 @@ const appRoutes: Routes = [
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
       multi: true
+    },
+    {
+      provide: DROPZONE_CONFIG,
+      useValue: DEFAULT_DROPZONE_CONFIG
     }
   ],
   bootstrap: [AppComponent]

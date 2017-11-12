@@ -67,7 +67,6 @@ export class EmployeeComponent implements OnInit {
           this.employeeService.getAllEmployees().subscribe(
             result =>{
               this.allEmployees = result.employees;
-              console.log("result : "+JSON.stringify(this.allEmployees));
               this.initDataTable();
             },
             error =>{
@@ -114,6 +113,7 @@ export class EmployeeComponent implements OnInit {
   buildEmployeeForm(){
     this.employeeForm = this.formBuilder.group({
       id: [null],
+      profilepic: [null],
       title: [null, Validators.required],
       worktype: [null, Validators.required],
       dateofjoin:[null, Validators.required],
@@ -156,6 +156,7 @@ export class EmployeeComponent implements OnInit {
 
     this.employeeForm.patchValue({
       id: employee._id,
+      profilepic: employee.profilepic,
       title: employee.title,
       worktype: employee.worktype,
       dateofjoin: {
@@ -320,4 +321,20 @@ export class EmployeeComponent implements OnInit {
           this.addNewEmployeeForm();
         });
   }
+  
+  onFileChange(event) {
+    let files = event.target.files;
+    let file = files[0];
+
+    if (files && file) {
+        let reader = new FileReader();
+        reader.onload =this.getBinaryString.bind(this);
+        reader.readAsBinaryString(file);
+    }
+  }
+
+  getBinaryString(readerEvt) {
+    let binaryString = readerEvt.target.result;
+    this.employeeForm.patchValue({profilepic: "data:image/jpeg;base64,"+btoa(binaryString)});
+    }
 }
