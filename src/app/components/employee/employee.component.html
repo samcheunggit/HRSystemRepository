@@ -1,6 +1,6 @@
 <app-navbar></app-navbar>
 <br><br>
-<div class="container">
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px', fullScreenBackdrop: true }"></ngx-loading>
 <div style="margin: auto; max-width: 1000px; margin-bottom: 50px;" *ngIf="showTable">
   <a class="btn btn-default btn-sm float-right" href="#" (click)="addNewEmployeeForm()">
       <i class="fa fa-plus fa-lg"></i> Add</a>
@@ -43,20 +43,15 @@
           </ng-template>
         </data-table-column>
     </data-table>
-</div>
-
+<br><br><br><br>
 <div *ngIf="showForm">
   <form (ngSubmit)="saveEmployee(employeeForm.value)" [formGroup]="employeeForm" disabled="true">
-    {{employeeForm.value | json}}
     <p class="h1">Employment Information</p>
     <hr/><br>
     <input type="hidden" class="form-control" formControlName="id" name="id" value="{{employee?._id}}">
-    <input type="file" name="file" id="file" class="inputfile" (change)="onFileChange($event)" />
-    <label for="file">Choose a file</label>
-    <dropzone [config]="config" [message]="'Click or drag images here to upload'" (error)="onUploadError($event)" (success)="onUploadSuccess($event)"></dropzone>
     <div class="row">
       <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 col-md-pull-8">
-          <img id="showProfilePic" src="{{employee?.profilepic}}" class="img-fluid img-thumbnail" style="max-height:100%; max-width:100%;">
+          <app-image-dropzone [imagePublicId]="employee?.profilepic" (onPublicIdChanged)="onPublicIdChanged($event)" (uploadImageDone)="isUploadImageDone($event)"></app-image-dropzone>
       </div>
       <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-md-pull-4">
         <div class="form-group row">
@@ -217,7 +212,7 @@
         </div>
       </div>
     </div><br>
-    <button type="submit" class="btn btn-primary" [disabled]="!employeeForm.valid"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
+    <button type="submit" class="btn btn-primary" [disabled]="!employeeForm.valid || !uploadImageDone"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
   </form>
   </div>
 </div>

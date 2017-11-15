@@ -53,4 +53,9 @@ export class EmployeeService {
     let params = new HttpParams().set('employeeId', employeeId);
     return this.http.delete<EmployeeResponse>(this.employeeURLPrefix+'/deleteEmployee', {params: params});
   }
+  
+  deleteEmployeeProfile(imagePublicId){
+    let params = new HttpParams().set('imagePublicId', imagePublicId);
+    return this.http.delete<EmployeeResponse>(this.employeeURLPrefix+'/deleteEmployeeProfile', {params: params});
+  }
 }

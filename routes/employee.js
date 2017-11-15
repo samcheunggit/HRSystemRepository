@@ -6,6 +6,13 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const Employee = require('../models/employee');
 const dbConfig = require('../config/database');
+const cloudinary = require('cloudinary');
+
+cloudinary.config({ 
+  cloud_name: 'hhn3yyryw', 
+  api_key: '667391383193948', 
+  api_secret: 'pr7k1hAvLVW6z33H-ZCxJX83evg' 
+});
 
 // Add New Employee
 router.post('/addEmployee', passport.authenticate('jwt', dbConfig.jwtOpts), (req, res, next)=>{
@@ -52,6 +59,18 @@ router.delete('/deleteEmployee', passport.authenticate('jwt', dbConfig.jwtOpts),
     }
   })
   
+});
+
+// delete deleteEmployeeProfile
+router.delete('/deleteEmployeeProfile', passport.authenticate('jwt', dbConfig.jwtOpts), (req, res, next)=>{
+  cloudinary.v2.uploader.destroy(req.query.imagePublicId, (error, result)=>{
+    if(error){
+      res.json({success: false, message: "Failed to delete image!" + error});
+    }
+    else{
+      res.json({success: true, message: "image deleted successfully"});
+    }
+  });
 });
 
 // Get One Employee

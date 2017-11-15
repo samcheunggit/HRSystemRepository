@@ -9,8 +9,9 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { DataTableModule } from 'angular-4-data-table-bootstrap-4';
 import { MyDatePickerModule } from 'mydatepicker';
 import { DropzoneModule } from 'ngx-dropzone-wrapper';
-import { DROPZONE_CONFIG } from 'ngx-dropzone-wrapper';
 import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
+import { LoadingModule } from 'ngx-loading';
+
 
 import * as $ from 'jquery';
 
@@ -31,11 +32,15 @@ import { LoginService } from './services/login/login.service';
 
 /* Guards */
 import { AuthGuard } from './guards/authGuard';
+import { ImageDropzoneComponent } from './components/employee/image-dropzone/image-dropzone.component';
 
-const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
- // Change this to your upload POST address:
-  // url: 'https://httpbin.org/post',
+const DROPZONE_CONFIG: DropzoneConfigInterface = {
+  // Change this to your upload POST address:
+  url: 'https://api.cloudinary.com/v1_1/hhn3yyryw/image/upload',
   maxFilesize: 50,
+  maxFiles: 1,
+  addRemoveLinks: true,
+  clickable: true,
   acceptedFiles: 'image/*'
 };
 
@@ -51,7 +56,8 @@ const appRoutes: Routes = [
     LoginComponent,
     HomeComponent,
     NavbarComponent,
-    EmployeeComponent
+    EmployeeComponent,
+    ImageDropzoneComponent
   ],
   imports: [
     BrowserModule,
@@ -62,7 +68,8 @@ const appRoutes: Routes = [
     HttpClientModule,
     DataTableModule,
     MyDatePickerModule,
-    DropzoneModule
+    DropzoneModule.forRoot(DROPZONE_CONFIG),
+    LoadingModule
   ],
   providers: [
     AuthenticationService, 
@@ -73,10 +80,6 @@ const appRoutes: Routes = [
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
       multi: true
-    },
-    {
-      provide: DROPZONE_CONFIG,
-      useValue: DEFAULT_DROPZONE_CONFIG
     }
   ],
   bootstrap: [AppComponent]

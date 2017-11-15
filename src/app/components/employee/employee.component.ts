@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, EventEmitter, Input, Output } from '@angular/core';
 import { EmployeeService } from '../../services/employee/employee.service';
 import { LoginService } from '../../services/login/login.service';
 import { GlobalConstants } from '../../constants/globalConstants';
@@ -9,6 +9,7 @@ import { SweetAlertService } from 'ngx-sweetalert2';
 import * as moment from 'moment';
 import { forkJoin } from "rxjs/observable/forkJoin";
 import {IMyDpOptions} from 'mydatepicker';
+import { ImageDropzoneComponent } from './image-dropzone/image-dropzone.component'; 
 
 @Component({
   selector: 'app-employee',
@@ -18,6 +19,8 @@ import {IMyDpOptions} from 'mydatepicker';
 })
 export class EmployeeComponent implements OnInit {
   
+  @ViewChild(ImageDropzoneComponent) child:ImageDropzoneComponent;
+
   public myDatePickerOptions: IMyDpOptions = {
         // other options...
         dateFormat: 'dd-mmm-yyyy',
@@ -25,7 +28,8 @@ export class EmployeeComponent implements OnInit {
         monthSelector: true,
         yearSelector: true
     };
-  
+
+  public loading = false;
   employeeForm: FormGroup;
   showForm : boolean = false;
   showTable : boolean = false;
@@ -37,6 +41,7 @@ export class EmployeeComponent implements OnInit {
   items = [];
   itemCount = 0;
   itemResource:any;
+  uploadImageDone:boolean = true;
   
   constructor(
   private employeeService: EmployeeService,
@@ -58,6 +63,7 @@ export class EmployeeComponent implements OnInit {
   }
   
   getFormData(userType){
+    this.loading = true;
      if(userType == this.globalConstants.admin_usertype ||
        userType == this.globalConstants.secretary_usertype ||
        userType == this.globalConstants.principal_usertype){
@@ -72,7 +78,11 @@ export class EmployeeComponent implements OnInit {
             error =>{
               console.log("get employees failed: "+error.message);
               return false;
-          });
+            },
+            ()=>{
+              this.loading = false;
+            }
+          );
        }
     else{
       // get employee by subscribe the observable in service
@@ -85,7 +95,10 @@ export class EmployeeComponent implements OnInit {
           console.log("get employee failed: "+error.message);
           return false;
         },
-        () =>{this.showForm = true;});
+        () =>{
+          this.showForm = true;
+          this.loading = false;
+        });
     }
   }
   
@@ -131,12 +144,15 @@ export class EmployeeComponent implements OnInit {
     this.employeeForm.disable();
     
     this.employeeForm.valueChanges.subscribe(data => {
-//       console.log('Form changes'+JSON.stringify(data))
+      // console.log('Form changes'+JSON.stringify(data))
     })
   }
   
   clearForm(){
+    // set employee object to null, because reset the form the employee object is still exist
+    this.employee = null;
     this.employeeForm.reset();
+    this.child.resetDropZone();
     // reset form cannot mark date picker as pristine
     this.employeeForm.controls.dateofjoin.markAsPristine();
     this.employeeForm.controls.birthday.markAsPristine();
@@ -190,8 +206,11 @@ export class EmployeeComponent implements OnInit {
       text: 'to delete employee '+employee.fullname+' and related login account?'
     })
     .then(() => {
+      this.loading = true;
       // subscribe two observables in parallel
-      forkJoin([this.employeeService.deleteEmployee(employee._id), this.loginService.deleteLoginUserByEmployeeId(employee._id)]).subscribe(
+      forkJoin([this.employeeService.deleteEmployee(employee._id),
+                this.loginService.deleteLoginUserByEmployeeId(employee._id),
+                this.employeeService.deleteEmployeeProfile(employee.profilepic)]).subscribe(
         results => {
         // result[0] is deleteEmploye route, result[1] is deleteLoginUser route
         if(results[0].success && results[1].success){
@@ -220,6 +239,7 @@ export class EmployeeComponent implements OnInit {
       },
       ()=>{
         this.addNewEmployeeForm();
+        this.loading = false;
       });
     })
     .catch(() => console.log('canceled'));
@@ -233,6 +253,7 @@ export class EmployeeComponent implements OnInit {
   
   saveEmployee(employee){
     
+    this.loading = true;
     // retrieve and set date from date object first
     employee.dateofjoin = this.dateObjToJSDate(employee.dateofjoin);
     employee.birthday =  this.dateObjToJSDate(employee.birthday);
@@ -262,6 +283,7 @@ export class EmployeeComponent implements OnInit {
         },
         ()=>{
           this.addNewEmployeeForm();
+          this.loading = false;
         });
     }
     // add employee
@@ -319,22 +341,17 @@ export class EmployeeComponent implements OnInit {
         },
         () =>{
           this.addNewEmployeeForm();
+          this.loading = false;
         });
   }
   
-  onFileChange(event) {
-    let files = event.target.files;
-    let file = files[0];
-
-    if (files && file) {
-        let reader = new FileReader();
-        reader.onload =this.getBinaryString.bind(this);
-        reader.readAsBinaryString(file);
-    }
+  onPublicIdChanged(event){
+    console.log("parent employee public id changed: ",event);
+    this.employeeForm.patchValue({profilepic: event});
   }
-
-  getBinaryString(readerEvt) {
-    let binaryString = readerEvt.target.result;
-    this.employeeForm.patchValue({profilepic: "data:image/jpeg;base64,"+btoa(binaryString)});
-    }
+  
+  isUploadImageDone(event){
+    console.log("parent upload image done: ",event);
+    this.uploadImageDone = event;
+  }
 }
