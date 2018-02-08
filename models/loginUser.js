@@ -27,18 +27,38 @@ const loginUserSchema = mongoose.Schema({
   },
   usertype: {
     type: String
+  },
+  resetPasswordToken: {
+    type: String
+  },
+  resetPasswordExpires: {
+    type: Date
   }
 })
 
 // first argument: collection name, second argument: schema
 const LoginUser = module.exports = mongoose.model('loginuser', loginUserSchema)
- 
+
+// get login user by id
 module.exports.getLoginUserById = (id, callback)=>{
   LoginUser.findById(id, callback);
 }
 
+// get login user by user name
 module.exports.getLoginUserByUserName = (username, callback)=>{
   const query = {username: username}
+  LoginUser.findOne(query, callback);
+}
+
+// get login user by email
+module.exports.getLoginUserByEmail = (email, callback)=>{
+  const query = {email: email}
+  LoginUser.findOne(query, callback);
+}
+
+// get login user by token and check token is valid or not
+module.exports.getLoginUserByResetPWToken = (token, callback)=>{
+  const query = {resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() }}
   LoginUser.findOne(query, callback);
 }
 
@@ -70,3 +90,27 @@ module.exports.passwordValidation = (inputPassword, storedPassword, callback)=>{
 module.exports.deleteLoginUserByEmployeeId = (employeeId, callback)=>{
   LoginUser.findOneAndRemove({ employeeid: employeeId }, callback)
 }
+
+// get all users
+module.exports.getAllUsers = (callback)=>{
+  LoginUser.find(callback);
+}
+
+// save user details
+module.exports.saveUserDetails = (user, callback)=>{
+  LoginUser.findByIdAndUpdate(user._id,  user, { new: true }, callback)
+}
+
+// reset password
+module.exports.resetPassword = (changedLoginUser, callback)=>{
+  // generate salt for 10 rounds
+  bcrypt.genSalt(10, (error, salt) => {
+    // hash on separate function calls
+    bcrypt.hash(changedLoginUser.newPassword, salt, (error, hash)=>{
+      if(error) throw error;
+      // store hashed password and save it in mongodb
+      LoginUser.findByIdAndUpdate(changedLoginUser.loginUserId, { $set: {password: hash, resetPasswordToken: null, resetPasswordExpires: null }}, { new: true, upsert : false }, callback)
+    });
+  });
+}
+

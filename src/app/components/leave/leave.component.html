@@ -1,0 +1,118 @@
+<app-navbar></app-navbar>
+<br><br>
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px', fullScreenBackdrop: true }"></ngx-loading>
+<div class="container">
+    <!----------------- Calender Header ---------------->
+    <div class="row text-center">
+      <div class="col-md-4">
+        <div class="btn-group">
+          <div
+            class="btn btn-primary btn-sm"
+            mwlCalendarPreviousView
+            [view]="view"
+            [(viewDate)]="viewDate"
+            (viewDateChange)="activeDayIsOpen = false">
+            Previous
+          </div>
+          <div
+            class="btn btn-outline-secondary btn-sm"
+            mwlCalendarToday
+            [(viewDate)]="viewDate">
+            Today
+          </div>
+          <div
+            class="btn btn-primary btn-sm"
+            mwlCalendarNextView
+            [view]="view"
+            [(viewDate)]="viewDate"
+            (viewDateChange)="activeDayIsOpen = false">
+            Next
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+      </div>
+      <div class="col-md-4">
+        <a class="btn btn-info btn-sm align-right" href="#" (click)="applyLeave()">
+        <i class="fa fa-plus-circle fa-lg"></i> Apply Leave</a>
+      </div>
+    </div>
+    <!----------------- Calender Header END ---------------->
+    <hr>
+    <br>
+    <!----------------- Apply Leave Form ---------------->
+      <form *ngIf="showApplyForm" #applyLeaveForm="ngForm">
+        <div>
+            <div class="row">
+              <div class="col-sm-2 form-group">
+                <select class="form-control" name="leaveType" [(ngModel)]="form_leaveType" #leaveType="ngModel"
+                [ngClass]="{
+                  'is-invalid': leaveType.invalid && leaveType.dirty, 
+                  'is-valid': leaveType.valid && leaveType.dirty 
+                }"
+                (change)="currentLeaveType = leaveSelect.value" #leaveSelect required>
+                  <option value="" [selected]="selected">- Leave Type -</option>
+                  <option *ngFor="let leavetype of leavetypes" [value]="leavetype.id">{{leavetype.value}}</option>
+                </select>
+                <div class="invalid-feedback" *ngIf="leaveType.invalid && leaveType.dirty"> 
+                  Leave Type is mandatory
+                </div>
+              </div>
+              <div class="col-sm-4 form-group" *ngIf="currentLeaveType != 'OTL'">
+                <owl-date-time name='leavePeriod' [(ngModel)]="form_leavePeriod" #leavePeriod="ngModel" placeHolder='Leave Period' inputStyleClass='date-picker' showButtons='true'
+                               type='calendar' selectionMode='range' required='true' dateFormat='DD-MMMM-YYYY'></owl-date-time>
+                <div class="date-picker-error-msg" *ngIf="leavePeriod.invalid && leavePeriod.dirty"> 
+                  Leave Period is mandatory
+                </div>
+              </div>
+              <div class="col-sm-4 form-group" *ngIf="currentLeaveType === 'OTL'">
+                <owl-date-time placeHolder='Leave Period' name='leavePeriod' [(ngModel)]="form_leavePeriod" #leavePeriod="ngModel" inputStyleClass='date-picker' showButtons='true'
+                               type='both' hourFormat='12' selectionMode='range' required='true'></owl-date-time>     
+                <div class="date-picker-error-msg" *ngIf="leavePeriod.invalid && leavePeriod.dirty"> 
+                  Leave Period is mandatory
+                </div>
+              </div>
+              <div class="col-sm-2 form-group" *ngIf="currentLeaveType === 'AL' || currentLeaveType === 'SL'">
+                <select class="form-control" id="ampm" name='ampm' [(ngModel)]="form_ampm" #ampm="ngModel" required
+                        [ngClass]="{
+                          'is-invalid': ampm.invalid && ampm.dirty, 
+                          'is-valid': ampm.valid && ampm.dirty 
+                        }">
+                  <option value="">- Select One -</option>
+                  <option *ngFor="let ampm of ampms" [value]="ampm.id" [selected]="ampm.id==leave?.ampm">{{ampm.value}}</option>
+                </select>
+                <div class="invalid-feedback" *ngIf="ampm.invalid && ampm.dirty"> 
+                  Time session is mandatory
+                </div>
+              </div>
+              <div class="col-sm-3 form-group">
+                <input type="text" class="form-control" id="remarks" placeholder="Remarks" name='remarks'  [(ngModel)]="form_remarks">
+              </div>
+              <div class="col-sm-1">
+                <button type="submit" class="btn btn-info" [disabled]="applyLeaveForm.invalid" (click)="applyForm();">Apply</button>
+              </div>
+            </div>
+          </div>
+      </form>
+      <br>
+    <!----------------- Apply Leave Form End---------------->
+    <!----------------- Main Calender ---------------->
+    <mwl-calendar-month-view
+        [viewDate]="viewDate"
+        [events]="events"
+        [refresh]="refresh"
+        [activeDayIsOpen]="activeDayIsOpen"
+        (dayClicked)="dayClicked($event.day)"
+        (eventClicked)="eventClicked($event)">
+     </mwl-calendar-month-view>
+
+    <!----------------- Main Calender END ---------------->
+    <br>
+    <hr>
+    <br>
+    <div>
+      <app-leavetable (onLeaveDataChanged)="onLeaveDataChanged($event)" (leaveId)="setLeaveId($event)"></app-leavetable>
+    </div>
+    <br><br><br>
+</div>

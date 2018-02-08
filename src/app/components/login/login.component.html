@@ -1,21 +1,23 @@
 <div class="login-page">
+  
+  <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px', fullScreenBackdrop: true }"></ngx-loading>
+
   <div class="login-logo">
     <img class="img-responsive w-100" [src]="logoPath" alt="Lok Fu Rhenish Nursery">
   </div>
 
   <div class="form">
     <!--     main login form -->
-    <form #loginForm="ngForm" class="login-form" *ngIf="showLoginForm" (submit)="userLogin()">
-      
+    <form #loginForm="ngForm" class="login-form" *ngIf="showLoginForm">
        <p class="font-weight-bold" style="word-break: break-all;" *ngIf="serverErrorMsg">
          {{serverErrorMsg}}
        </p>
       
-      <div class="error-msg text-left font-weight-bold" *ngIf="usernameRef.invalid && (usernameRef.dirty || usernameRef.touched)">
+      <div class="error-msg text-left font-weight-bold" *ngIf="usernameRef.invalid && (usernameRef.dirty || usernameRef.touched) && loginForm.submitted">
         <label>Please enter username.</label>
       </div>
 
-      <div class="error-msg text-left font-weight-bold" *ngIf="passwordRef.invalid && (passwordRef.dirty || passwordRef.touched)">
+      <div class="error-msg text-left font-weight-bold" *ngIf="passwordRef.invalid && (passwordRef.dirty || usernameRef.touched) && loginForm.submitted">
         <label>Please enter password.</label>
       </div>
 
@@ -26,16 +28,34 @@
         <input type="password" class="form-control" placeholder="Password" id="password" required [(ngModel)]="password" name="password" #passwordRef="ngModel">
       </div>
 
-      <button type="submit" [disabled]="loginForm.form.invalid">login</button>
+      <button type="submit" (click)="userLogin()">login</button>
       <br><br>
       <a class="login-form-anchor" href="#" (click)="switchForm()">Forgot your password? </a>
     </form>
 
-
     <!--     forgot passward form -->
-    <form class="forgotpw-form" *ngIf="showForgotPWForm">
-      <input type="text" placeholder="Email address" required/>
-      <button>get your password! </button>
+    <form class="forgotpw-form" *ngIf="showForgotPWForm" #forgotPWForm="ngForm">
+      <div class="form-group">
+        
+        <div *ngIf="forgotPWEmail.invalid && (forgotPWEmail.dirty || forgotPWEmail.touched)">
+          <div *ngIf="forgotPWEmail.errors.required" class="error-msg text-left">
+            Email is mandatory
+          </div>
+          <div *ngIf="forgotPWEmail.errors.pattern" class="error-msg text-left">
+            Email is not in correct format
+          </div>
+          <div *ngIf="forgotPWServerErrorMsg" class="error-msg text-left">
+            {{forgotPWServerErrorMsg}}
+          </div>
+        </div>
+        
+        <br>
+        <input type="email" placeholder="Your Email Address" class="form-control" name="forgotPWEmail" 
+        [(ngModel)]="form_forgotPWEmail" #forgotPWEmail="ngModel"
+        [ngClass]="{'is-invalid': forgotPWEmail.invalid && forgotPWEmail.dirty, 'is-valid': forgotPWEmail.valid && forgotPWEmail.dirty }"
+        required pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"/>
+      </div>
+      <button type="submit" (click)="forgotPassword()">submit</button>
       <br><br>
       <a class="login-form-anchor" href="#" (click)="switchForm()">back to Sign In</a>
     </form>

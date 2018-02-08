@@ -1,0 +1,14 @@
+.date-picker{
+    height: 2.5em;
+}
+
+.date-picker-error-msg{
+    display: block;
+    margin-top: .25rem;
+    font-size: .875rem;
+    color: #dc3545; 
+}
+
+.cal-month-view .cal-day-number {
+    opacity: 1;
+}

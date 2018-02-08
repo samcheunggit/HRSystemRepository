@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs';
 import { tokenNotExpired } from 'angular2-jwt';
+import { GlobalConstants } from '../../constants/globalConstants';
 
 interface LoginUserResponse {
     success: boolean;
@@ -52,6 +53,10 @@ export class AuthenticationService {
     const token = localStorage.getItem('token');
     this.token = token;
     return this.token;
+  }
+  
+  isNormalEmployee(){
+    return (this.getUserTypeFromLoginUser() == 'employee')
   }
 
   isLoggedIn() {

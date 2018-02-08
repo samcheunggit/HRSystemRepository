@@ -1,0 +1,105 @@
+<app-navbar></app-navbar>
+<br><br>
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px', fullScreenBackdrop: true }"></ngx-loading>
+<div class="container">
+  <data-table
+    headerTitle="Leave Management Table"
+    [items]="lm"
+    [itemCount]="lmCount"
+    [limit]="(lmCount>10?10:lmCount)"
+    (reload)="reloadLMData($event)"
+
+    [pagination]="true"
+    [indexColumn]="false"
+    [selectColumn]="true"
+    [multiSelect]="true"
+    >
+    <data-table-column
+      property="employeename"
+      header="Employee Name">
+    </data-table-column>
+    <data-table-column
+      property="annualleave"
+      header="Annual Leave"
+      sortable="true">
+      <ng-template #dataTableCell let-item="item">
+        <input type="number" [(ngModel)]="item.annualleave" class="form-control input-sm" style="width: 75px"/>
+      </ng-template>
+    </data-table-column>
+    <data-table-column
+      property="sickleave"
+      header="Sick Leave"
+      sortable="true">
+      <ng-template #dataTableCell let-item="item">
+        <input type="number" [(ngModel)]="item.sickleave" class="form-control input-sm" style="width: 75px"/>
+      </ng-template>
+    </data-table-column>
+    <data-table-column
+      property="overtimeleave"
+      header="Over Time Leave"
+      sortable="true">
+      <ng-template #dataTableCell let-item="item">
+        <input type="number" [(ngModel)]="item.overtimeleave" class="form-control input-sm" style="width: 75px"/>
+      </ng-template>
+    </data-table-column>
+    <data-table-column
+      property="healthleave"
+      header="Health Leave"
+      sortable="true">
+      <ng-template #dataTableCell let-item="item">
+        <input type="number" [(ngModel)]="item.healthleave" class="form-control input-sm" style="width: 75px"/>
+      </ng-template>
+    </data-table-column>
+    <data-table-column
+      property="maternityleave"
+      header="Maternity Leave"
+      sortable="true">
+      <ng-template #dataTableCell let-item="item">
+        <input type="number" [(ngModel)]="item.maternityleave" class="form-control input-sm" style="width: 75px"/>
+      </ng-template>
+    </data-table-column>
+    <data-table-column
+      property="marriageleave"
+      header="Marriage Leave"
+      sortable="true">
+      <ng-template #dataTableCell let-item="item">
+        <input type="number" [(ngModel)]="item.marriageleave" class="form-control input-sm" style="width: 75px"/>
+      </ng-template>
+    </data-table-column>
+    <data-table-column
+      property="funeralleave"
+      header="Funeral Leave"
+      sortable="true">
+      <ng-template #dataTableCell let-item="item">
+        <input type="number" [(ngModel)]="item.funeralleave" class="form-control input-sm" style="width: 75px"/>
+      </ng-template>
+    </data-table-column>
+    <data-table-column
+      property="otherleave"
+      header="Other Leave"
+      sortable="true">
+      <ng-template #dataTableCell let-item="item">
+        <input type="number" [(ngModel)]="item.otherleave" class="form-control input-sm" style="width: 75px"/>
+      </ng-template>
+    </data-table-column>
+    <data-table-column
+      header="Actions">
+      <ng-template #dataTableHeader let-item="item">
+        <i>Actions</i>
+      </ng-template>
+      <ng-template #dataTableCell let-item="item">
+        <a class="btn btn-outline-info btn-sm" href="#" (click)="rowClicked(item)">
+              <i class="fa fa-floppy-o fa-lg"></i> Save</a>
+      </ng-template>
+    </data-table-column>
+  </data-table>
+  <div>
+    <div>
+        <b>Selected:</b>
+        <span [textContent]="lmTable.selectedRows.length"></span>
+    </div>
+    <div *ngFor="let selected of lmTable.selectedRows">
+        <span [textContent]="selected.item.model"></span>
+    </div>
+  </div>
+</div>

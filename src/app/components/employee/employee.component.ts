@@ -1,7 +1,9 @@
 import { Component, OnInit, ViewChild, ElementRef, EventEmitter, Input, Output } from '@angular/core';
 import { EmployeeService } from '../../services/employee/employee.service';
 import { LoginService } from '../../services/login/login.service';
+import { LeaveService } from '../../services/leave/leave.service';
 import { GlobalConstants } from '../../constants/globalConstants';
+import { MasterData } from '../../constants/masterData';
 import { DataTableResource } from 'angular-4-data-table-bootstrap-4';
 import { AuthenticationService } from '../../services/authentication/authentication.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -15,7 +17,7 @@ import { ImageDropzoneComponent } from './image-dropzone/image-dropzone.componen
   selector: 'app-employee',
   templateUrl: './employee.component.html',
   styleUrls: ['./employee.component.css'],
-  providers: [GlobalConstants, SweetAlertService]
+  providers: [GlobalConstants, MasterData, SweetAlertService]
 })
 export class EmployeeComponent implements OnInit {
   
@@ -35,8 +37,8 @@ export class EmployeeComponent implements OnInit {
   showTable : boolean = false;
   employee : any;
   allEmployees : any;
-  genders = [{ id: 'M', value: 'Male'}, { id: 'F', value: 'Female'}];
-  worktypes = [{ id: 'F', value: 'Full Time'}, { id: 'P', value: 'Part Time'}, { id: 'T', value: 'Temporary'}];
+  genders = this.masterData.genders;
+  worktypes = this.masterData.worktypes;
 
   items = [];
   itemCount = 0;
@@ -46,7 +48,9 @@ export class EmployeeComponent implements OnInit {
   constructor(
   private employeeService: EmployeeService,
   private loginService: LoginService,
+  private leaveService: LeaveService,
   private globalConstants: GlobalConstants,
+  private masterData: MasterData,
   private authenticationService:AuthenticationService,
   private formBuilder:FormBuilder,
   private swal:SweetAlertService) {}
@@ -55,18 +59,12 @@ export class EmployeeComponent implements OnInit {
 
     this.buildEmployeeForm();
 
-    this.getFormData(this.getCurrentUserType());
+    this.getFormData();
   }
   
-  getCurrentUserType(){
-    return this.authenticationService.getUserTypeFromLoginUser();
-  }
-  
-  getFormData(userType){
+  getFormData(){
     this.loading = true;
-     if(userType == this.globalConstants.admin_usertype ||
-       userType == this.globalConstants.secretary_usertype ||
-       userType == this.globalConstants.principal_usertype){
+     if(!this.authenticationService.isNormalEmployee()){
           // hide employee form at first
           this.showForm = false;
           // get employee by subscribe the observable in service
@@ -152,7 +150,9 @@ export class EmployeeComponent implements OnInit {
     // set employee object to null, because reset the form the employee object is still exist
     this.employee = null;
     this.employeeForm.reset();
-    this.child.resetDropZone();
+    if(this.child){
+      this.child.resetDropZone();
+    }
     // reset form cannot mark date picker as pristine
     this.employeeForm.controls.dateofjoin.markAsPristine();
     this.employeeForm.controls.birthday.markAsPristine();
@@ -200,7 +200,6 @@ export class EmployeeComponent implements OnInit {
   }
 
   deleteEmployee(employee){
-    
     this.swal.confirm({
       title: 'Are you sure',
       text: 'to delete employee '+employee.fullname+' and related login account?'
@@ -210,11 +209,15 @@ export class EmployeeComponent implements OnInit {
       // subscribe two observables in parallel
       forkJoin([this.employeeService.deleteEmployee(employee._id),
                 this.loginService.deleteLoginUserByEmployeeId(employee._id),
-                this.employeeService.deleteEmployeeProfile(employee.profilepic)]).subscribe(
+                this.employeeService.deleteEmployeeProfile(employee.profilepic),
+                this.leaveService.deleteLeaveByEmployeeId(employee._id),
+                this.leaveService.deleteLeaveDetailsByEmployeeId(employee._id)]).subscribe(
         results => {
         // result[0] is deleteEmploye route, result[1] is deleteLoginUser route
-        if(results[0].success && results[1].success){
-          this.getFormData(this.getCurrentUserType());
+        if(results[0].success && results[1].success &&
+          results[2].success && results[3].success &&
+          results[4].success){
+          this.getFormData();
           this.swal.success({
                 title: 'Deleted successfully',
                 showConfirmButton: false,
@@ -224,6 +227,9 @@ export class EmployeeComponent implements OnInit {
         else{
           console.log("deleted failed - employe return message: "+results[0].message);
           console.log("deleted failed - login user return message: "+results[1].message);
+          console.log("deleted failed - employe profile pic return message: "+results[2].message);
+          console.log("deleted failed - Leave return message: "+results[3].message);
+          console.log("deleted failed - Leave Details return message: "+results[4].message);
               this.swal.error({
                 title: 'Deleted Failed',
                 html: 'Please contact IT support: <br>'
@@ -257,29 +263,35 @@ export class EmployeeComponent implements OnInit {
     // retrieve and set date from date object first
     employee.dateofjoin = this.dateObjToJSDate(employee.dateofjoin);
     employee.birthday =  this.dateObjToJSDate(employee.birthday);
-    
     // update employee
     if (this.employeeForm.valid && this.employeeForm.controls.id.value) {
-        this.employeeService.updateEmployee(employee).subscribe(
-        (res) => {
-            if(res.success){
-              this.getFormData(this.getCurrentUserType());
-              this.swal.success({
-                title: 'Saved successfully',
-                showConfirmButton: false,
-                timer: 1500
-              }).catch(()=>{console.log("time out");});
-            }
-            else{
-              console.log("update employee failed: "+res.message);
-              this.swal.error({
-                title: 'Save Failed',
-                html: 'Please contact IT support: <br>'+res.message
-              });
-            }
+      forkJoin([this.employeeService.updateEmployee(employee),
+                  this.leaveService.updateEmployeeNameForLeave(employee.fullname, employee.id)]).subscribe(
+          results => {
+          // result[0] is updateEmployee route, result[1] is updateEmployeeNameForLeave route
+          if(results[0].success && results[1].success){
+            this.getFormData();
+                this.swal.success({
+                  title: 'Saved successfully',
+                  showConfirmButton: false,
+                  timer: 1500
+                }).catch(()=>{console.log("time out");});
+          }
+          else{
+            console.log("update employee failed: "+results[0].message);
+            console.log("update employee failed: "+results[1].message);
+                this.swal.error({
+                  title: 'Save Failed',
+                  html: 'Please contact IT support: <br>'
+                });
+          }
         },
         error => {
-            console.log("POST call in error", error);
+          console.log("POST call in error", error);
+          this.swal.error({
+            title: 'Deleted Failed',
+            html: 'Please contact IT support: <br>'
+          });
         },
         ()=>{
           this.addNewEmployeeForm();
@@ -288,63 +300,84 @@ export class EmployeeComponent implements OnInit {
     }
     // add employee
     if (this.employeeForm.valid && !this.employeeForm.controls.id.value) {
-        this.employeeService.addEmployee(employee).subscribe(
-        (res) => {
-            if(res.success){
-              this.getFormData(this.getCurrentUserType());
-              this.addNewLoginUser(res.employee);
-            }
-            else{
-              console.log("add employee failed: "+res.message);
-              this.swal.error({
-                title: 'Save Failed',
-                html: 'Please contact IT support: <br>'+res.message
+      
+      // ask for new employee email for creating login account
+      this.swal.confirm({
+        title: 'Please enter employee email for registration',
+        input: 'email',
+        showCancelButton: true,
+        confirmButtonText: 'Submit',
+        showLoaderOnConfirm: true,
+        allowOutsideClick: false
+      }).then((email) => {
+        if (email) {
+          this.employeeService.addEmployee(employee).subscribe(
+            (res) => {
+                if(res.success){
+                  this.getFormData();
+                  // add email property to newly created employee for login table
+                  let newAddedEmployee = res.employee;
+                  newAddedEmployee['email'] = email;
+                  this.addLoginUserAndCreateLeave(newAddedEmployee);
+                }
+                else{
+                  console.log("add employee failed: "+res.message);
+                  this.swal.error({
+                    title: 'Save Failed',
+                    html: 'Please contact IT support: <br>'+res.message
+                });
+                }
+            },
+            error => {
+                console.log("POST call in error", error);
+            },
+            ()=>{
+              this.addNewEmployeeForm();
             });
-            }
-        },
-        error => {
-            console.log("POST call in error", error);
-        },
-        ()=>{
-          this.addNewEmployeeForm();
+          }
+      }).catch(() => {
+        this.loading = false;
+        console.log('canceled')
         });
     }
   }
   
-  addNewLoginUser(newAddedEmployee){
-    this.loginService.registerLoginUser(newAddedEmployee).subscribe(
-        (res) => {
-            if(res.success){
-                this.swal.success({
-                  title: 'Save successfully',
-                  text: "Login Account is created as well and sent the password to employee's email",
-                  showConfirmButton: false,
-                  timer: 3000
-                }).catch(()=>{console.log("time out");});
-            }
-            else{
-              console.log("add login user failed: "+res.message);
-              console.log("add new login user failed: ");
-                this.swal.error({
-                  title: 'Save Failed',
-                  html: 'Please contact IT support: <br>'+res.message
-                });
-            }
-        },
-        error => {
-            console.log("POST call in error", error);
-            console.log("add new login user failed: ");
-                this.swal.error({
-                  title: 'Save Failed',
-                  html: 'Please contact IT support: <br>'+error
-                });
-        },
-        () =>{
-          this.addNewEmployeeForm();
-          this.loading = false;
+  addLoginUserAndCreateLeave(newAddedEmployee){
+    // subscribe two observables in parallel
+      forkJoin([this.leaveService.createLeave(newAddedEmployee),
+                this.loginService.registerLoginUser(newAddedEmployee)]).subscribe(
+        results => {
+        // result[0] is createLeave route, result[1] is registerLoginUser route
+        if(results[0].success && results[1].success){
+          this.swal.success({
+            title: 'Save successfully',
+            text: "Login Account is created as well and sent the password to employee's email",
+            showConfirmButton: false,
+            timer: 3000
+          }).catch(()=>{console.log("time out");});
+        }
+        else{
+          console.log("create leave failed: "+results[0].message);
+          console.log("add login user failed: "+results[1].message);
+          this.swal.error({
+            title: 'Save Failed',
+            html: 'Please contact IT support: <br>'+results[0].message+'<br>'+results[1].message
+          });
+        }
+      },
+      error => {
+        console.log("POST call in error", error);
+        this.swal.error({
+          title: 'Save Failed',
+          html: 'Please contact IT support: <br>'+error
         });
+      },
+      ()=>{
+        this.addNewEmployeeForm();
+        this.loading = false;
+      });
   }
-  
+
   onPublicIdChanged(event){
     console.log("parent employee public id changed: ",event);
     this.employeeForm.patchValue({profilepic: event});

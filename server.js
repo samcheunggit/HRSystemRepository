@@ -9,6 +9,8 @@ const passport = require('passport');
 // define routes
 const loginUser = require('./routes/loginUser');
 const employee = require('./routes/employee');
+const leave = require('./routes/leave');
+const leaveManagement = require("./routes/leaveManagement")
 
 // require database configuration
 const dbConfig = require('./config/database');
@@ -61,6 +63,8 @@ app.use(passport.session());
 // Tell our app to use the Users routes defined in ./routes/loginUser.js
 app.use('/loginUser', loginUser);
 app.use('/employee', employee);
+app.use('/leave', leave);
+app.use('/leaveManagement', leaveManagement);
 
 // Index route for angular front
 app.get('*', (req,res) => {

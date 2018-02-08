@@ -1,0 +1,22 @@
+<table class="table table-sm table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Leave Type</th>
+      <th scope="col">Entitled</th>
+      <th scope="col">Remains</th>
+    </tr>
+  </thead>
+  <tbody class="table-hover">
+    <tr *ngFor="let data of tableCols">
+      <td>
+        {{data.title}}
+      </td>
+      <td>
+        {{data.entitled}}
+      </td>
+      <td>
+        {{data.remains}}
+      </td>
+    </tr>
+  </tbody>
+</table>

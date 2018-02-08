@@ -3,9 +3,9 @@ const moment = require('moment');
 
 // Employee Schema
 const EmployeeSchema = mongoose.Schema({
-//   employeeid: String,
   userid: {
-    type: String
+    type: String,
+    index: { unique: true }
   },
   fullname: {
     type: String
@@ -62,8 +62,8 @@ module.exports.getEmployeeById = (id, callback)=>{
 module.exports.addEmployee = (newEmployee, callback)=>{
   
   // generate id for new login user
-  let objectId = new mongoose.mongo.ObjectId();
-  newEmployee.userid = objectId;
+  newEmployee.userid = new mongoose.mongo.ObjectId();
+  newEmployee.leaveid = new mongoose.mongo.ObjectId();
   newEmployee.save(callback);
 }
 

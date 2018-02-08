@@ -1,4 +1,4 @@
-<dropzone id="profileDropZone" [message]="'Click or drag images here to upload'" 
+<dropzone id="profileDropZone" [message]="'Click or drag images here to upload'" disabled=true
           (error)="onUploadError($event)" (success)="onUploadSuccess($event)" 
           (complete)="onComplete($event)" (canceled)="onCancel($event)" (addedfile)="onAddedfile()"
           (sending)="onSendingImage($event)" (removedfile)="onDeleteImage($event)"></dropzone>

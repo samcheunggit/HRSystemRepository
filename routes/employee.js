@@ -6,12 +6,13 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const Employee = require('../models/employee');
 const dbConfig = require('../config/database');
+const cloudinaryConfig = require('../config/cloudinary');
 const cloudinary = require('cloudinary');
 
 cloudinary.config({ 
-  cloud_name: 'hhn3yyryw', 
-  api_key: '667391383193948', 
-  api_secret: 'pr7k1hAvLVW6z33H-ZCxJX83evg' 
+  cloud_name: cloudinaryConfig.cloud_name,
+  api_key: cloudinaryConfig.api_key, 
+  api_secret: cloudinaryConfig.api_secret
 });
 
 // Add New Employee

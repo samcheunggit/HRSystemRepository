@@ -1,0 +1,80 @@
+<app-navbar></app-navbar>
+
+<br><br>
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px', fullScreenBackdrop: true }"></ngx-loading>
+<div class="container">
+  <!--<a class="btn btn-outline-info btn-bg" href="#" (click)="sendEmailTest()">-->
+  <!--            <i class="fa fa-floppy-o fa-lg"></i> Send Email</a>-->
+  <data-table
+    headerTitle="User Management Table"
+    [items]="user"
+    [itemCount]="userCount"
+    [limit]="(userCount>10?10:userCount)"
+    (reload)="reloadUserData($event)"
+
+    [pagination]="true"
+    [indexColumn]="false"
+    [selectColumn]="true"
+    [multiSelect]="true"
+    >
+    <data-table-column
+      property="username"
+      header="User Name"
+      sortable="true">
+      <ng-template #dataTableCell let-item="item">
+        <input type="text" [(ngModel)]="item.username" class="form-control input-sm"/>
+      </ng-template>
+    </data-table-column>
+    <data-table-column
+      property="email"
+      header="Email"
+      sortable="true">
+      <ng-template #dataTableCell let-item="item">
+        <input type="email" [(ngModel)]="item.email" class="form-control input-sm"/>
+      </ng-template>
+    </data-table-column>
+    <data-table-column
+      property="usertype"
+      header="User Type"
+      sortable="true">
+      <ng-template #dataTableCell let-item="item">
+        <select class="form-control input-sm" [(ngModel)]="item.usertype">
+          <option value="">- Select One -</option>
+          <option *ngFor="let userType of userTypes" [value]="userType.id"
+          [selected]="item.usertype==userType.id">{{userType.value}}</option>
+      </select>
+      </ng-template>
+    </data-table-column>
+    <data-table-column
+      property="createdate"
+      header="Create Date"
+      sortable="true">
+      <ng-template #dataTableCell let-item="item">
+        <input type="text" [ngModel]="item.createdate | date:'dd-MMMM-yyyy'" 
+        (ngModelChange)="item.createdate = $event" class="form-control input-sm" disabled="true"/>
+      </ng-template>
+    </data-table-column>
+    <data-table-column
+      property="isactive"
+      header="Is Active"
+      sortable="true">
+      <ng-template #dataTableCell let-item="item">
+        <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
+              <input type="checkbox" #isActiveCheckBox [checked]="item.isactive" [(ngModel)]="item.isactive" class="custom-control-input">
+              <span class="custom-control-indicator"></span>
+              <span class="custom-control-description">{{isActiveCheckBox.checked?"  Active":"  Inactive"}}</span>
+            </label>
+      </ng-template>
+    </data-table-column>
+    <data-table-column
+      header="Actions">
+      <ng-template #dataTableHeader let-item="item">
+        <i>Actions</i>
+      </ng-template>
+      <ng-template #dataTableCell let-item="item">
+        <a class="btn btn-outline-info btn-sm" href="#" (click)="rowClicked(item)">
+              <i class="fa fa-floppy-o fa-lg"></i> Save</a>
+      </ng-template>
+    </data-table-column>
+  </data-table>
+</div>

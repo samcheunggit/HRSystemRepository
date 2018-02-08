@@ -2,6 +2,7 @@ import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef, EventEmitt
 import { GlobalConstants } from '../../../constants/globalConstants';
 import { DropzoneComponent , DropzoneDirective, DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
 import { EmployeeService } from '../../../services/employee/employee.service';
+import { AuthenticationService } from '../../../services/authentication/authentication.service';
 
 @Component({
   selector: 'app-image-dropzone',
@@ -30,13 +31,18 @@ export class ImageDropzoneComponent implements OnInit {
   @ViewChild(DropzoneComponent) componentRef: DropzoneComponent;
   @ViewChild(DropzoneDirective) directiveRef: DropzoneDirective;
 
-  constructor(private globalConstants: GlobalConstants,private employeeService: EmployeeService) { }
+  constructor(private globalConstants: GlobalConstants,
+              private authenticationService:AuthenticationService,
+              private employeeService: EmployeeService) { }
 
   ngOnInit() {}
   
   ngAfterViewInit(){
     this.viewInit = true;
     this.showSavedImage();
+    if(this.authenticationService.isNormalEmployee()){
+      this.disableDropZone();
+    }
   }
   
   showSavedImage(){
@@ -59,6 +65,10 @@ export class ImageDropzoneComponent implements OnInit {
   
   resetDropZone(){
     this.componentRef.directiveRef.reset();
+  }
+  
+  disableDropZone(){
+    this.componentRef.directiveRef.dropzone.removeEventListeners();
   }
   
   onAddedfile(){
