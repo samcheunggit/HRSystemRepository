@@ -18,6 +18,7 @@ export class ResetPasswordComponent implements OnInit {
   resetPasswordForm: FormGroup;
   isPasswordMatch: boolean = false;
   token: string;
+  public loading = false;
   
   constructor(private activatedRoute: ActivatedRoute,
               private router: Router, 
@@ -86,6 +87,7 @@ export class ResetPasswordComponent implements OnInit {
   resetPassword(newPassword){
 
     if(this.loginUser){
+      this.loading = true;
       this.loginService.resetPassword(newPassword, this.token).subscribe(
         (result) => {
             if(result.success){
@@ -109,6 +111,7 @@ export class ResetPasswordComponent implements OnInit {
             console.log("POST call in error", error);
         },
         () => {
+            this.loading = false;
             console.log("The POST observable is now completed.");
             this.router.navigate(['']);
      });
