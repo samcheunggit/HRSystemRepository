@@ -53,7 +53,6 @@ module.exports.getLeavesByEmployeeId = (employeeId, callback)=>{
 
 // update employee name for leave
 module.exports.updateEmployeeNameForLeave = (object, callback)=>{
-  console.log("object test: ",object);
   const query = {employeeid: object.employeeId}
   Leave.update(query, {employeename: object.employeeName}, callback);
 }

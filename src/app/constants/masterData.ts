@@ -15,9 +15,9 @@ export class MasterData {
     ampms = [{ id: 'AM', value: 'AM'}, { id: 'PM', value: 'PM'}, { id: 'W', value: 'Whole Day'}];
     // Leave Table
     leavetableCols = [
-        { id: 'AL', title: 'Annual Leave', entitled: 0, remains: 0},
-        { id: 'SL', title: 'Sick Leave', entitled: 0, remains: 0},
-        { id: 'OTL', title: 'OT Leave', entitled: 0, remains: 0},
+        { id: 'AL', title: 'Annual Leave', remains: 0},
+        { id: 'SL', title: 'Sick Leave', remains: 0},
+        { id: 'OTL', title: 'OT Leave', remains: 0},
     ];
     // User Types
     userTypes = [{id: 'admin', value: 'admin'}, {id: 'principle', value: 'principle'}, {id: 'secretary', value: 'secretary'}, {id: 'employee', value: 'employee'}];
