@@ -1,6 +1,10 @@
-# LfrnApp
+# Lok Fu Rhenish Nursery Leave Application 
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.4.2.
+This is a self learning project to learn Angular 4, Node.js , Express.js and MongoDB.
+
+# Login Information
+
+For admin login, username is "admin" and password is "admin123".
 
 ## Development server
 
