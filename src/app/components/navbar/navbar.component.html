@@ -1,24 +1,27 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">Lok Fu Rhenish Nursery</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+  <!--<a class="navbar-brand" href="#">Lok Fu Rhenish Nursery</a>-->
+  <!--<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">-->
+  <!--  <span class="navbar-toggler-icon"></span>-->
+  <!--</button>-->
+  <div class="login-logo">
+    <img class="img-responsive w-100" [src]="logoPath" alt="Lok Fu Rhenish Nursery">
+  </div>
   <div class="collapse navbar-collapse" id="navbarText">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
-        <a class="nav-link" [routerLink]="['/home']">Home <span class="sr-only">(current)</span></a>
+        <a class="nav-link text-primary" [routerLink]="['/home']">Home <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/employee']">Employee</a>
+        <a class="nav-link text-warning" [routerLink]="['/employee']">Employee</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/leave']">Leave</a>
+        <a class="nav-link text-info" [routerLink]="['/leave']">Leave</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/leave-management']">Leave Management</a>
+        <a class="nav-link text-success" [routerLink]="['/leave-management']">Leave Management</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/user-management']">User Management</a>
+        <a class="nav-link text-danger" [routerLink]="['/user-management']">User Management</a>
       </li>
     </ul>
     <span class="navbar-text">

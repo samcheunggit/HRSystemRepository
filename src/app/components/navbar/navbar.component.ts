@@ -10,6 +10,7 @@ import { AuthenticationService } from '../../services/authentication/authenticat
 export class NavbarComponent implements OnInit {
   
   username:string = ""
+  logoPath: string = './assets/logo.png'
 
   constructor(
   private router: Router, 

@@ -148,7 +148,7 @@ export class LeaveComponent implements OnInit {
           else{
             // 2. After checking and its valid, save all leave details in leaveDetails table
             let splitDates = this.splitLeavePeriod();
-            this.saveLeaveAndLeaveDetails(newRemainsDay, splitDates.leaveDateFrom, splitDates.leaveDateTo);
+            this.saveLeaveAndLeaveDetails(applyDay, newRemainsDay, splitDates.leaveDateFrom, splitDates.leaveDateTo);
           }
         })
         .catch(() => console.log('canceled'));
@@ -217,7 +217,7 @@ export class LeaveComponent implements OnInit {
     return result
   }
   
-  saveLeaveAndLeaveDetails(newRemainsDay, leaveFrom, leaveTo){
+  saveLeaveAndLeaveDetails(applyDay, newRemainsDay, leaveFrom, leaveTo){
     // Update LeaveTable: leaveId, updatedRemains, leaveType
     // Insert LeaveDetailsTable: leaveId, employeeId, leaveType, leaveFrom, leaveTo, remarks
     forkJoin([this.leaveService.saveLeave(this.leaveId, newRemainsDay, this.form_leaveType),
