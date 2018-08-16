@@ -56,7 +56,7 @@ export class AuthenticationService {
   }
   
   isNormalEmployee(){
-    return (this.getUserTypeFromLoginUser() == 'employee')
+    return (this.getUserTypeFromLoginUser() == 'employee' || (this.getUserTypeFromLoginUser() == '' || this.getUserTypeFromLoginUser() == null))
   }
 
   isLoggedIn() {

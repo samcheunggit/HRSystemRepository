@@ -114,6 +114,11 @@ export class LoginComponent implements OnInit {
             }
             else{
               this.forgotPWServerErrorMsg = data.message
+              this.swal.error({
+                title: 'Error',
+                text: data.message,
+                showConfirmButton: true
+              })
             }
         },
         error => {

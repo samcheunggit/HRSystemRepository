@@ -39,6 +39,8 @@ export class EmployeeComponent implements OnInit {
   allEmployees : any;
   genders = this.masterData.genders;
   worktypes = this.masterData.worktypes;
+  userTypes = this.masterData.userTypes;
+  isDeleteBtnHidden : boolean = true;
 
   items = [];
   itemCount = 0;
@@ -56,10 +58,14 @@ export class EmployeeComponent implements OnInit {
   private swal:SweetAlertService) {}
 
   ngOnInit() {
+    
+    this.isDeleteBtnHidden = (this.authenticationService.getUserTypeFromLoginUser()!="admin");
 
     this.buildEmployeeForm();
 
     this.getFormData();
+    
+    
   }
   
   getFormData(){
@@ -200,6 +206,15 @@ export class EmployeeComponent implements OnInit {
   }
 
   deleteEmployee(employee){
+    let currentUserEmployeeId = this.authenticationService.getEmployeeIdFromLoginUser();
+    
+    if(employee._id === currentUserEmployeeId){
+      this.swal.error({
+          title: 'Deleted Failed',
+          html: 'you cannot delete your own user account!'
+        });
+    }
+    else{
     this.swal.confirm({
       title: 'Are you sure',
       text: 'to delete employee '+employee.fullname+' and related login account?'
@@ -249,7 +264,8 @@ export class EmployeeComponent implements OnInit {
       });
     })
     .catch(() => console.log('canceled'));
-
+    }
+    
     return false;
   }
   

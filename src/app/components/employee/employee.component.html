@@ -36,8 +36,9 @@
             [sortable]="true"
             [resizable]="true">
         </data-table-column>
+        
          <data-table-column
-          header="Actions">
+          header="Actions" *ngIf="!isDeleteBtnHidden">
           <ng-template #dataTableCell let-item="item">
             <a class="btn btn-outline-danger btn-sm" href="#" (click)="deleteEmployee(item)">
               <i class="fa fa-trash-o fa-lg"></i> Delete</a>

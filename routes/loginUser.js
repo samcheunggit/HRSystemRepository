@@ -71,7 +71,7 @@ router.post('/register', (req, res, next)=>{
             // third function: send token for reset the password through email
             (token, user, callback) => {
               // build email object
-              let emailObj = {toUser: req.body.email,token: token, url: req.headers.host};
+              let emailObj = {toUser: req.body.email, userName: loginUser.username, token: token, url: req.headers.host};
               sendEmailHelper.sendWelcomeEmail(emailObj, (error, callback)=>{
                 if(error){
                    res.json({success: false, message: "Failed to send welcome email!" + error});

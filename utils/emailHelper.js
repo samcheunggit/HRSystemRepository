@@ -28,6 +28,7 @@ module.exports = {
     sendWelcomeEmail:(emailObj, callback)=>{
         console.log("welcome email object: ",emailObj);
         let changePasswordURL = emailObj.url+"/reset-password/"+emailObj.token
+        let userName = emailObj.userName;
         console.log("reset password url: "+changePasswordURL);
         sgMail.setApiKey(sendGridConfig.api_key);
         sgMail.setSubstitutionWrappers('{{', '}}'); // Configure the substitution tag wrappers globally
@@ -39,7 +40,7 @@ module.exports = {
             text: 'Welcome to Lok Fu Rhenish Nursery!',
             html: '<h3 style="text-align:center">Welcome to Lok Fu Rhenish Nursery!</h3>',
             templateId: '22e19af4-57ae-4fc0-bc4d-61a20eb6bb53',
-            substitutions: { changepasswordurl: changePasswordURL}
+            substitutions: { changepasswordurl: changePasswordURL, username: userName}
         };
 
         sgMail.send(msg, (error, result) => {

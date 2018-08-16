@@ -11,13 +11,15 @@ export class NavbarComponent implements OnInit {
   
   username:string = ""
   logoPath: string = './assets/logo.png'
+  isNormalEmployee:boolean = true
 
   constructor(
   private router: Router, 
   private authenticationService: AuthenticationService) { }
 
   ngOnInit() {
-    this.username = this.authenticationService.getUsernameFromLoginUser()
+    this.username = this.authenticationService.getUsernameFromLoginUser();
+    this.isNormalEmployee = this.authenticationService.isNormalEmployee();
   }
   
   logout(){
